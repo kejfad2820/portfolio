@@ -1,0 +1,7 @@
+echo
+pip install aiogram
+pip install pydantic_settings
+pip install pydantic
+pip install geopy
+pip install pyowm
+echo off
