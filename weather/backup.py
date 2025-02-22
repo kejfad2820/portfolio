@@ -223,9 +223,35 @@ async def handle_three_days(message: types.Message):
 			third_forecast.append(weather)
 			third_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
 
+		'''if(day_1st - timedelta(hours=1)).timestamp() < date_time_str < (day_1st + timedelta(hours=3)).timestamp() or (day_1st + timedelta(hours=4)).timestamp() < date_time_str < (day_1st + timedelta(hours=6)).timestamp() or (day_1st + timedelta(hours=16)).timestamp() < date_time_str < (day_1st + timedelta(hours=19)).timestamp():
+			first_forecast.append(weather)
+
+		elif(day_2nd - timedelta(hours=1)).timestamp() < date_time_str < (day_2nd + timedelta(hours=3)).timestamp() or (day_2nd + timedelta(hours=4)).timestamp() < date_time_str < (day_2nd + timedelta(hours=6)).timestamp() or (day_2nd + timedelta(hours=16)).timestamp() < date_time_str < (day_2nd + timedelta(hours=19)).timestamp():
+			second_forecast.append(weather)
+
+		elif(day_3rd - timedelta(hours=1)).timestamp() < date_time_str < (day_3rd + timedelta(hours=3)).timestamp() or (day_3rd + timedelta(hours=4)).timestamp() < date_time_str < (day_3rd + timedelta(hours=6)).timestamp() or (day_3rd + timedelta(hours=16)).timestamp() < date_time_str < (day_3rd + timedelta(hours=19)).timestamp():
+			third_forecast.append(weather)'''
+
+		'''if (day_1st - timedelta(hours=1)).timestamp() < date_time_str < (day_1st + timedelta(hours=3)).timestamp() or (day_2nd - timedelta(hours=1)).timestamp() < date_time_str < (day_2nd + timedelta(hours=3)).timestamp() or (day_3rd - timedelta(hours=1)).timestamp() < date_time_str < (day_3rd + timedelta(hours=3)).timestamp():
+			#morning_forecast.append(date_time)
+			morning_forecast.append(weather)
+		elif (day_1st + timedelta(hours=4)).timestamp() < date_time_str < (day_1st + timedelta(hours=6)).timestamp() or (day_2nd + timedelta(hours=4)).timestamp() < date_time_str < (day_2nd + timedelta(hours=6)).timestamp() or (day_3rd + timedelta(hours=4)).timestamp() < date_time_str < (day_3rd + timedelta(hours=6)).timestamp():
+			#afternoon_forecast.append(date_time)
+			afternoon_forecast.append(weather)
+		elif (day_1st + timedelta(hours=16)).timestamp() < date_time_str < (day_1st + timedelta(hours=19)).timestamp() or (day_2nd + timedelta(hours=16)).timestamp() < date_time_str < (day_2nd + timedelta(hours=19)).timestamp() or (day_3rd + timedelta(hours=16)).timestamp() < date_time_str < (day_3rd + timedelta(hours=19)).timestamp():
+			#night_forecast.append(date_time)
+			night_forecast.append(weather)
+		else:
+			pass'''
+
+	#await message.answer(f"1st day: {first_forecast}")
+	#await message.answer(f"2nd day: {second_forecast}")
+	#await message.answer(f"3rd day: {third_forecast}")
+
 	await message.answer(f"{first_date} \n{view_weather_three(first_forecast)}")
 	await message.answer(f"{second_date} \n{view_weather_three(second_forecast)}")
 	await message.answer(f"{third_date} \n{view_weather_three(third_forecast)}")
+	#await message.answer(f"{first_forecast}")
 
 async def main():
 	await dp.start_polling(bot)
