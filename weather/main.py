@@ -1,18 +1,11 @@
 import asyncio
 import logging
-import requests
-import pytz
-import time as tm
-from timezonefinder import TimezoneFinder
 from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps, formatting
-#from pyowm.utils.timeutils import timeutils
-from datetime import datetime, date, timedelta, time, timezone
+from datetime import datetime, date, timedelta#, time, #timezone
 from aiogram import Bot, types, utils, Dispatcher, F, Router
-from aiogram.handlers import CallbackQueryHandler
 from aiogram.filters.command import Command, Filter
-from aiogram.filters.callback_data import CallbackData
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, \
 KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, \
 ContentType, Message, location, CallbackQuery
@@ -61,34 +54,54 @@ def show_weather_three(weather, i):
 	return weather_message
 
 def view_weather_three(forecast_list):
-	morning_message = "Morning"
-	afternoon_message = "Afternoon"
-	night_message = "Night"
 	i = 0
 	for weather in forecast_list:
-		if i == 0:
-			morning = show_weather_three(weather, i)
-		if i == 1:
-			afternoon = show_weather_three(weather, i)
-		elif i == 2:
-			night = show_weather_three(weather, i)
+		match i:
+			case 0:
+				morning = show_weather_three(weather, i)
+			case 1:
+				afternoon = show_weather_three(weather, i)
+			case 2:
+				night = show_weather_three(weather, i)
 		i += 1
 	day_message = morning + afternoon + night
 	return day_message
 
-def show_weather_tomorrow(tomorrow_at_time, lat, lon):
-	three_h_forecaster = mgr.forecast_at_coords(lat, lon, '3h')
-	weather = three_h_forecaster.get_weather_at(tomorrow_at_time)
-	temp = weather.temperature('celsius')
-	w_temp = temp['temp']
-	w_temp_feels = temp['feels_like']
+def show_weather_tomorrow(lat, lon):
+	tomorrow_at_morning = timestamps.tomorrow(3, 0)
+	tomorrow_at_afternoon = timestamps.tomorrow(9, 0)
+	tomorrow_at_night = timestamps.tomorrow(18, 0)
 
-	w_wind = weather.wind()
-	windness = w_wind['speed']
-	w_humidity = weather.humidity
-	w_status = weather.detailed_status
+	part_of_weather = ""
+	date_message = datetime.strftime((datetime.now() + timedelta(days=1)), '%d.%m.%Y')
+	weather_message = date_message + "\n"
 
-	weather_message = f"Temp : {w_temp}°C,\nFeels like : {w_temp_feels}°C,\nWind : {windness}m/s,\nHumidity : {w_humidity}%,\nStatus : {w_status}"
+	for i in range(3):
+		match i:
+			case 0:
+				tomorrow_at_time = tomorrow_at_morning
+				time_message = "--------------Morning--------------"
+			case 1:
+				tomorrow_at_time = tomorrow_at_afternoon
+				time_message = "--------------Afternoon--------------"
+			case 2:
+				tomorrow_at_time = tomorrow_at_night
+				time_message = "--------------Night--------------"
+			case _:
+				break
+
+		three_h_forecaster = mgr.forecast_at_coords(lat, lon, '3h')
+		weather = three_h_forecaster.get_weather_at(tomorrow_at_time)
+		temp = weather.temperature('celsius')
+		w_temp = temp['temp']
+		w_temp_feels = temp['feels_like']
+		w_wind = weather.wind()
+		windness = w_wind['speed']
+		w_humidity = weather.humidity
+		w_status = weather.detailed_status
+
+		part_of_weather = f"{time_message}\nTemp : {w_temp}°C,\nFeels like : {w_temp_feels}°C,\nWind : {windness}m/s,\nHumidity : {w_humidity}%,\nStatus : {w_status}\n"
+		weather_message += part_of_weather
 
 	return weather_message
 
@@ -105,8 +118,8 @@ async def cmd_quest(message: types.Message):
 	keyboard = types.ReplyKeyboardMarkup(
 		keyboard=kb_request,
 		resize_keyboard=True,
-		input_field_placeholder="Enter the button")
-	await message.answer("Enter the function", reply_markup=keyboard)
+		input_field_placeholder="Share your location")
+	await message.answer("Share your location :", reply_markup=keyboard)
 
 @dp.message(F.location)
 async def handle_location(message: types.Message):
@@ -161,28 +174,12 @@ async def handle_tomorrow(message: types.Message):
 	global lat
 	global lon
 
-	obs = mgr.weather_at_coords(float(lat), float(lon))
-	w = obs.weather
-
-	now = datetime.now()
-	tomorrow = now + timedelta(days=1)
-	tomorrow_timestamp = int(tomorrow.timestamp())
-	
-	tomorrow_at_morning = timestamps.tomorrow(3, 0)
-	tomorrow_at_afternoon = timestamps.tomorrow(9, 0)
-	tomorrow_at_night = timestamps.tomorrow(18, 0)
-
-	await message.answer(f"Weather for tomorrow as of 8 am : \n{show_weather_tomorrow(tomorrow_at_morning, lat, lon)}")
-	await message.answer(f"Weather for tomorrow as of 2 pm : \n{show_weather_tomorrow(tomorrow_at_afternoon, lat, lon)}")
-	await message.answer(f"Weather for tomorrow as of 11 pm : \n{show_weather_tomorrow(tomorrow_at_night, lat, lon)}")
+	await message.answer(f"{show_weather_tomorrow(lat, lon)}")
 
 @dp.message(F.text == "3 days weather")
 async def handle_three_days(message: types.Message):
 	global lat
 	global lon
-
-	#obs = mgr.weather_at_coords(float(lat), float(lon), '3h')
-	#w = obs.weather
 
 	three_h_forecast = mgr.forecast_at_coords(lat, lon, '3h').forecast
 	today = datetime.today()
@@ -211,8 +208,6 @@ async def handle_three_days(message: types.Message):
 
 		if(insert_date(day_1st, -1) < date_time_str < insert_date(day_1st, 3)) or (insert_date(day_1st, 4) < date_time_str < insert_date(day_1st, 6)) or (insert_date(day_1st, 16) < date_time_str < insert_date(day_1st, 19)):
 			first_forecast.append(weather)
-			#first_date = datetime.strftime(datetime.strptime(date_time, '%Y-%m-%d'), '%Y-%m-%d')
-			#first_date_strp = datetime.strptime(date_time, '%Y-%m-%d')
 			first_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
 
 		elif(insert_date(day_2nd, -1) < date_time_str < insert_date(day_2nd, 3)) or (insert_date(day_2nd, 4) < date_time_str < insert_date(day_2nd, 6)) or (insert_date(day_2nd, 16) < date_time_str < insert_date(day_2nd, 19)):
