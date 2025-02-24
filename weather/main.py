@@ -107,7 +107,7 @@ def show_weather_tomorrow(lat, lon):
 
 #@dp.message(Command('start'))
 @router.message(Command(commands=["start"]))
-async def cmd_quest(message: types.Message):
+async def cmd_start(message: types.Message):
 	kb_request = [
 		[
 			types.KeyboardButton(text="Share your location", 
@@ -221,6 +221,11 @@ async def handle_three_days(message: types.Message):
 	await message.answer(f"{first_date} \n{view_weather_three(first_forecast)}")
 	await message.answer(f"{second_date} \n{view_weather_three(second_forecast)}")
 	await message.answer(f"{third_date} \n{view_weather_three(third_forecast)}")
+
+@router.message(Command(commands=["help"]))
+async def cmd_help(message: types.Message):
+	message_help = "Please enter the command /start and provide your location.\n(If you are using Telegram Desktop, please note that your location will not be sent. Instead, please use Telegram Mobile.)\nNext, click on the button to view the weather."
+	await message.answer(message_help)
 
 async def main():
 	await dp.start_polling(bot)
