@@ -213,15 +213,15 @@ async def handle_three_days(message: types.Message):
 		date_time = weather.reference_time('iso')
 		date_time_str = datetime.fromisoformat(date_time).timestamp()
 
-		if(insert_date(day_1st, -1) < date_time_str < insert_date(day_1st, 3)) or (insert_date(day_1st, 4) < date_time_str < insert_date(day_1st, 6)) or (insert_date(day_1st, 16) < date_time_str < insert_date(day_1st, 19)):
+		if(insert_date(day_1st, -1) < date_time_str < insert_date(day_1st, 3)) or (insert_date(day_1st, 4) < date_time_str < insert_date(day_1st, 7)) or (insert_date(day_1st, 16) < date_time_str < insert_date(day_1st, 19)):
 			first_forecast.append(weather)
 			first_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
 
-		elif(insert_date(day_2nd, -1) < date_time_str < insert_date(day_2nd, 3)) or (insert_date(day_2nd, 4) < date_time_str < insert_date(day_2nd, 6)) or (insert_date(day_2nd, 16) < date_time_str < insert_date(day_2nd, 19)):
+		elif(insert_date(day_2nd, -1) < date_time_str < insert_date(day_2nd, 3)) or (insert_date(day_2nd, 4) < date_time_str < insert_date(day_2nd, 7)) or (insert_date(day_2nd, 16) < date_time_str < insert_date(day_2nd, 19)):
 			second_forecast.append(weather)
 			second_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
 
-		elif(insert_date(day_3rd, -1) < date_time_str < insert_date(day_3rd, 3)) or (insert_date(day_3rd, 4) < date_time_str < insert_date(day_3rd, 6)) or (insert_date(day_3rd, 16) < date_time_str < insert_date(day_3rd, 19)):
+		elif(insert_date(day_3rd, -1) < date_time_str < insert_date(day_3rd, 3)) or (insert_date(day_3rd, 4) < date_time_str < insert_date(day_3rd, 7)) or (insert_date(day_3rd, 16) < date_time_str < insert_date(day_3rd, 19)):
 			third_forecast.append(weather)
 			third_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
 
