@@ -170,7 +170,43 @@ async def handle_three_days(message: Message):	#	Нажатие на кнопк�
 	await message.answer(calc.show_weather_three(lang, lat, lon, 2))	#	Вывод второго дня
 	await message.answer(calc.show_weather_three(lang, lat, lon, 3))	#	Вывод третьего дня
 
+<<<<<<< HEAD
 	await message.answer(open_keyboard(lang, "Anything else?"), reply_markup=show_keyboard())	#	Открытие клавиатуры для дальнейших действий
+=======
+	first_forecast = []
+	second_forecast = []
+	third_forecast = []
+
+	first_date = ""
+	second_date = ""
+	third_date = ""
+
+	def insert_date(day_x, hours):
+		day_x = (day_x + timedelta(hours=hours)).timestamp()
+		return day_x
+
+	for weather in three_h_forecast:
+		date_time = weather.reference_time('iso')
+		date_time_str = datetime.fromisoformat(date_time).timestamp()
+
+		if(insert_date(day_1st, -1) < date_time_str < insert_date(day_1st, 3)) or (insert_date(day_1st, 4) < date_time_str < insert_date(day_1st, 7)) or (insert_date(day_1st, 16) < date_time_str < insert_date(day_1st, 19)):
+			first_forecast.append(weather)
+			first_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
+
+		elif(insert_date(day_2nd, -1) < date_time_str < insert_date(day_2nd, 3)) or (insert_date(day_2nd, 4) < date_time_str < insert_date(day_2nd, 7)) or (insert_date(day_2nd, 16) < date_time_str < insert_date(day_2nd, 19)):
+			second_forecast.append(weather)
+			second_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
+
+		elif(insert_date(day_3rd, -1) < date_time_str < insert_date(day_3rd, 3)) or (insert_date(day_3rd, 4) < date_time_str < insert_date(day_3rd, 7)) or (insert_date(day_3rd, 16) < date_time_str < insert_date(day_3rd, 19)):
+			third_forecast.append(weather)
+			third_date = datetime.strftime(datetime.fromisoformat(date_time), '%d.%m.%Y')
+
+	await message.answer(f"{first_date} \n{show_weather_three(first_forecast)}", reply_markup=ReplyKeyboardRemove())
+	await message.answer(f"{second_date} \n{show_weather_three(second_forecast)}")
+	await message.answer(f"{third_date} \n{show_weather_three(third_forecast)}")
+
+	await message.answer("Anything else?", reply_markup=show_keyboard())
+>>>>>>> aa3bfb2caacec84f8d95176cfea7016c764acd3b
 
 @dp.message(Command('help'))
 async def cmd_help(message: Message):	#	Команда /help
